@@ -1850,7 +1850,7 @@ void _assert_return_code(const intmax_t result,
 {
     if (result < 0) {
         if (error > 0) {
-            cmocka_print_error("%s < 0, errno(%d): %s\n",
+            cmocka_print_error("%s < 0, errno(%"PRIi32"): %s\n",
                            expression,
                            error,
                            strerror(error));
