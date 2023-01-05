@@ -99,7 +99,7 @@ WINBASEAPI BOOL WINAPI IsDebuggerPresent(VOID);
 #else /* _WIN32 */
 
 #ifndef __PRI64_PREFIX
-# if __WORDSIZE == 64
+# if defined(__WORDSIZE) && __WORDSIZE == 64
 #  define __PRI64_PREFIX "l"
 # else
 #  define __PRI64_PREFIX "ll"
