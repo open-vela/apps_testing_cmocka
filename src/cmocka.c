@@ -2427,6 +2427,7 @@ void cmocka_print_error(const char * const format, ...)
 /* Standard output and error print methods. */
 void vprint_message(const char* const format, va_list args)
 {
+#ifndef cmocka_vprint_message
     vprintf(format, args);
     fflush(stdout);
 #ifdef _WIN32
@@ -2435,11 +2436,15 @@ void vprint_message(const char* const format, va_list args)
     vsnprintf(buffer, sizeof(buffer), format, args);
     OutputDebugString(buffer);
 #endif /* _WIN32 */
+#else
+    cmocka_vprint_message(format, args);
+#endif
 }
 
 
 void vprint_error(const char* const format, va_list args)
 {
+#ifndef cmocka_vprint_error
     vfprintf(stderr, format, args);
     fflush(stderr);
 #ifdef _WIN32
@@ -2448,6 +2453,9 @@ void vprint_error(const char* const format, va_list args)
     vsnprintf(buffer, sizeof(buffer), format, args);
     OutputDebugString(buffer);
 #endif /* _WIN32 */
+#else
+    cmocka_vprint_error(format, args);
+#endif
 }
 
 
