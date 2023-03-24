@@ -3209,6 +3209,11 @@ int _cmocka_run_group_tests(const char *group_name,
             (tests[i].test_func != NULL
              || tests[i].setup_func != NULL
              || tests[i].teardown_func != NULL)) {
+            cm_tests[total_tests] = (struct CMUnitTestState) {
+                .test = &tests[i],
+                .status = CM_TEST_NOT_STARTED,
+                .state = NULL,
+            };
             if (global_test_filter_pattern != NULL) {
                 int match;
 
@@ -3222,14 +3227,9 @@ int _cmocka_run_group_tests(const char *group_name,
 
                 match = c_strmatch(tests[i].name, global_skip_filter_pattern);
                 if (match) {
-                    continue;
+                    cm_tests[i].status = CM_TEST_SKIPPED;
                 }
             }
-            cm_tests[total_tests] = (struct CMUnitTestState) {
-                .test = &tests[i],
-                .status = CM_TEST_NOT_STARTED,
-                .state = NULL,
-            };
             total_tests++;
         }
     }
@@ -3261,9 +3261,11 @@ int _cmocka_run_group_tests(const char *group_name,
                 cmtest->state = cmtest->test->initial_state;
             }
 
-            rc = cmocka_run_one_tests(cmtest);
+            if (cmtest->status != CM_TEST_SKIPPED) {
+                rc = cmocka_run_one_tests(cmtest);
+                total_runtime += cmtest->runtime;
+            }
             total_executed++;
-            total_runtime += cmtest->runtime;
             if (rc == 0) {
                 switch (cmtest->status) {
                     case CM_TEST_PASSED:
