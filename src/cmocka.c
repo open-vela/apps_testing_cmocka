@@ -2667,21 +2667,21 @@ static void cmprintf_group_finish_standard(const char *group_name,
     print_message("[==========] %s: %zu test(s) run.\n",
                   group_name,
                   total_executed);
-    print_error("[  PASSED  ] %u test(s).\n",
+    print_message("[  PASSED  ] %u test(s).\n",
                 (unsigned)(total_passed));
 
     if (total_skipped) {
-        print_error("[  SKIPPED ] %s: %zu test(s), listed below:\n",
+        print_message("[  SKIPPED ] %s: %zu test(s), listed below:\n",
                     group_name,
                     total_skipped);
         for (i = 0; i < total_executed; i++) {
             struct CMUnitTestState *cmtest = &cm_tests[i];
 
             if (cmtest->status == CM_TEST_SKIPPED) {
-                print_error("[  SKIPPED ] %s\n", cmtest->test->name);
+                print_message("[  SKIPPED ] %s\n", cmtest->test->name);
             }
         }
-        print_error("\n %zu SKIPPED TEST(S)\n", total_skipped);
+        print_message("\n %zu SKIPPED TEST(S)\n", total_skipped);
     }
 
     if (total_failed) {
