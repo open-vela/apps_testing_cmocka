@@ -3298,7 +3298,7 @@ int _cmocka_run_group_tests(const char *group_name,
                         break;
                 }
             } else {
-                char err_msg[2048] = {0};
+                char err_msg[256] = {0};
 
                 snprintf(err_msg, sizeof(err_msg),
                          "Could not run test: %s",
