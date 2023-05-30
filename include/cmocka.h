@@ -2517,6 +2517,15 @@ void cmocka_set_test_filter(const char *pattern);
  */
 void cmocka_set_skip_filter(const char *pattern);
 
+/**
+ * @brief Set a flag to list testcase name only.
+ *
+ * This set global list_tests flag to indicate whether to list only,
+ * if list_tests is 1, list only.
+ *
+ * @param list_tests  0 or 1.
+ */
+void cmocka_set_list_test(int list_test);
 /** @} */
 
 #endif /* CMOCKA_H_ */
