@@ -45,6 +45,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <float.h>
+#include <regex.h>
 
 /*
  * This allows to add a platform specific header file. Some embedded platforms
@@ -474,62 +475,18 @@ static int c_strreplace(char *src,
     return 0;
 }
 
-static int c_strmatch(const char *str, const char *pattern)
-{
-    int ok;
+static int c_regexmatch(const char *str, const char *pattern){
+    regex_t re;
+    int ret;
 
-    if (str == NULL || pattern == NULL) {
+    ret = regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0){
         return 0;
     }
+    ret = regexec(&re, str, 0, NULL, 0);
+    regfree(&re);
 
-    for (;;) {
-        /* Check if pattern is done */
-        if (*pattern == '\0') {
-            /* If string is at the end, we're good */
-            if (*str == '\0') {
-                return 1;
-            }
-
-            return 0;
-        }
-
-        if (*pattern == '*') {
-            /* Move on */
-            pattern++;
-
-            /* If we are at the end, everything is fine */
-            if (*pattern == '\0') {
-                return 1;
-            }
-
-            /* Try to match each position */
-            for (; *str != '\0'; str++) {
-                ok = c_strmatch(str, pattern);
-                if (ok) {
-                    return 1;
-                }
-            }
-
-            /* No match */
-            return 0;
-        }
-
-        /* If we are at the end, leave */
-        if (*str == '\0') {
-            return 0;
-        }
-
-        /* Check if we have a single wildcard or matching char */
-        if (*pattern != '?' && *str != *pattern) {
-            return 0;
-        }
-
-        /* Move string and pattern */
-        str++;
-        pattern++;
-    }
-
-    return 0;
+    return (ret == 0)? 1 : 0;
 }
 
 /* Create function results and expected parameter lists. */
@@ -3217,7 +3174,7 @@ int _cmocka_run_group_tests(const char *group_name,
             if (global_test_filter_pattern != NULL) {
                 int match;
 
-                match = c_strmatch(tests[i].name, global_test_filter_pattern);
+                match = c_regexmatch(tests[i].name, global_test_filter_pattern);
                 if (!match) {
                     continue;
                 }
@@ -3225,7 +3182,7 @@ int _cmocka_run_group_tests(const char *group_name,
             if (global_skip_filter_pattern != NULL) {
                 int match;
 
-                match = c_strmatch(tests[i].name, global_skip_filter_pattern);
+                match = c_regexmatch(tests[i].name, global_skip_filter_pattern);
                 if (match) {
                     cm_tests[i].status = CM_TEST_SKIPPED;
                 }
