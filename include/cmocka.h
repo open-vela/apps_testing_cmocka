@@ -2279,6 +2279,20 @@ typedef struct CheckParameterEvent {
     uintmax_t check_value_data;
 } CheckParameterEvent;
 
+/* Mutiple suite run summary counter. */
+#define CMOCKA_QUEUE_NAME "/tmp/cmocka"
+#define CMOCKA_MAX_MSG_SIZE 128
+#define CMOCKA_MAX_MSG_NUM 15
+
+typedef struct cm_summary_counter {
+    int tests;
+    int failed;
+    int passed;
+    int executed;
+    int errors;
+    int skipped;
+} cm_summary_counter;
+
 /* Used by expect_assert_failure() and mock_assert(). */
 extern int global_expecting_assert;
 extern jmp_buf global_expect_assert_env;
