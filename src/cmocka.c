@@ -2532,6 +2532,7 @@ static void cmprintf_group_finish_xml(const char *group_name,
         if (fp == NULL) {
             fp = fopen(buf, "w");
             if (fp != NULL) {
+                xml_printed = 0;
                 file_append = 1;
                 file_opened = 1;
             } else {
@@ -2554,13 +2555,15 @@ static void cmprintf_group_finish_xml(const char *group_name,
     }
 
     if (!xml_printed || (file_opened && !file_append)) {
-        fprintf(fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+        fprintf(fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<testsuites>\n");
         if (!file_opened) {
             xml_printed = 1;
         }
+    } else {
+        fseek(fp, strlen("</testsuites>\n") * -1, SEEK_END);
+        ftruncate(fileno(fp), ftell(fp));
     }
 
-    fprintf(fp, "<testsuites>\n");
     fprintf(fp, "  <testsuite name=\"%s\" time=\"%.3f\" "
                 "tests=\"%u\" failures=\"%u\" errors=\"%u\" skipped=\"%u\" >\n",
                 group_name,
