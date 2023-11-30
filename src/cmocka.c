@@ -492,6 +492,34 @@ static int c_regexmatch(const char *str, const char *pattern){
     return (ret == 0)? 1 : 0;
 }
 
+static void cmocka_shuffle(struct CMUnitTestState *cm_tests, size_t n) {
+    const char *env_seed = getenv("CMOCKA_SHUFFLE_SEED");
+    int num_seed;
+
+    if (env_seed == NULL) {
+        return;
+    }
+
+    if (sscanf(env_seed, "%d", &num_seed) <= 0) {
+        return;
+    }
+
+    if (num_seed == 0) {
+        srand(time(NULL));
+    } else if (num_seed > 0 && num_seed <= 99999) {
+        srand(num_seed);
+    } else {
+        return;
+    }
+
+    for (size_t i = n - 1; i > 0; i--) {
+        struct CMUnitTestState temp = cm_tests[i];
+        size_t j = rand() % (i + 1);
+        cm_tests[i] = cm_tests[j];
+        cm_tests[j] = temp;
+    }
+}
+
 /* Create function results and expected parameter lists. */
 void initialize_testing(const char *test_name) {
     (void)test_name;
@@ -3217,6 +3245,9 @@ int _cmocka_run_group_tests(const char *group_name,
             total_tests++;
         }
     }
+
+    /* Shuffling the tests */
+    cmocka_shuffle(cm_tests, total_tests);
 
     cmprintf_group_start(group_name, total_tests);
 
