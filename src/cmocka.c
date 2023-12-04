@@ -493,9 +493,14 @@ static int c_regexmatch(const char *str, const char *pattern){
 }
 
 static void cmocka_shuffle(struct CMUnitTestState *cm_tests, size_t n) {
-    const char *env_seed = getenv("CMOCKA_SHUFFLE_SEED");
+    const char *env_seed;
     int num_seed;
 
+    if (n <= 1) {
+        return;
+    }
+
+    env_seed = getenv("CMOCKA_SHUFFLE_SEED");
     if (env_seed == NULL) {
         return;
     }
