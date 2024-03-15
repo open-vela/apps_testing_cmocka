@@ -99,6 +99,10 @@
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #endif
 
+#ifdef list_initialize
+#undef list_initialize
+#endif
+
 /**
  * POSIX has sigsetjmp/siglongjmp, while Windows only has setjmp/longjmp.
  */
