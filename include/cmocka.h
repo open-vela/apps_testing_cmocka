@@ -2540,6 +2540,14 @@ void cmocka_set_skip_filter(const char *pattern);
  * @param list_tests  0 or 1.
  */
 void cmocka_set_list_test(int list_test);
+
+/**
+ * @brief Set global_skip_test to 1.
+ *
+ * This allows mark test as skipped when test failed.
+ *
+ */
+void cmocka_set_global_skip_test(void);
 /** @} */
 
 #endif /* CMOCKA_H_ */
