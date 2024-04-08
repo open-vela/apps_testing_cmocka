@@ -409,6 +409,11 @@ void _skip(const char * const file, const int line)
     exit(EXIT_FAILURE);
 }
 
+void cmocka_set_global_skip_test(void)
+{
+    global_skip_test = 1;
+}
+
 void _stop(void)
 {
     global_stop_test = 1;
