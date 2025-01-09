@@ -3240,20 +3240,18 @@ int _cmocka_run_group_tests(const char *group_name,
                 .status = CM_TEST_NOT_STARTED,
                 .state = NULL,
             };
-            if (global_test_filter_pattern != NULL) {
-                int match;
-
-                match = c_regexmatch(tests[i].name, global_test_filter_pattern);
-                if (!match) {
+            if (global_skip_filter_pattern != NULL) {
+                rc = c_regexmatch(tests[i].name, global_skip_filter_pattern);
+                if (rc) {
+                    cm_tests[i].status = CM_TEST_SKIPPED;
                     continue;
                 }
             }
-            if (global_skip_filter_pattern != NULL) {
-                int match;
 
-                match = c_regexmatch(tests[i].name, global_skip_filter_pattern);
-                if (match) {
-                    cm_tests[i].status = CM_TEST_SKIPPED;
+            if (global_test_filter_pattern != NULL) {
+                rc = c_regexmatch(tests[i].name, global_test_filter_pattern);
+                if (!rc) {
+                    continue;
                 }
             }
             total_tests++;
