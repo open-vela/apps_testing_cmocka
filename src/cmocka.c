@@ -3205,7 +3205,6 @@ int _cmocka_run_group_tests(const char *group_name,
     double total_runtime = 0;
     size_t i;
     int rc;
-    mqd_t mq_id;
 
     /* Make sure uintmax_t is at least the size of a pointer. */
     assert_true(sizeof(uintmax_t) >= sizeof(void*));
@@ -3370,24 +3369,6 @@ int _cmocka_run_group_tests(const char *group_name,
                           total_skipped,
                           total_runtime,
                           cm_tests);
-
-    mq_id = mq_open(CMOCKA_QUEUE_NAME, O_WRONLY);
-    if (mq_id != (mqd_t)-1) {
-        struct cm_summary_counter summary_send = {total_tests,
-                                                total_failed,
-                                                total_passed,
-                                                total_executed,
-                                                total_errors,
-                                                total_skipped};
-        if (mq_send(mq_id,
-                    (const char *)&summary_send,
-                    sizeof(summary_send),
-                    0) < 0) {
-            perror("mq_send");
-        }
-
-        mq_close(mq_id);
-    }
 
     for (i = 0; i < total_tests; i++) {
         vcm_free_error(discard_const_p(char, cm_tests[i].error_message));
