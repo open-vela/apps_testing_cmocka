@@ -3244,6 +3244,7 @@ int _cmocka_run_group_tests(const char *group_name,
                 rc = c_regexmatch(tests[i].name, global_skip_filter_pattern);
                 if (rc) {
                     cm_tests[i].status = CM_TEST_SKIPPED;
+                    total_tests++;
                     continue;
                 }
             }
